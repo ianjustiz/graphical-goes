@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Feature!</title>
+
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.3.js"></script>
+    <!-- <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script> -->
+
+    <link rel="stylesheet" href="./static/css/main.css" />
+  </head>
+
+  <body>
+    <div id="menuOverlay">
+      <h1 id="title"><em>graphical-goes</em></h1>
+      <div class="dropdownMenu">
+        <div class="blocks">
+          <p>satellite</p>
+          <select class="selection" id="satelliteSelect"></select>
+          <p>band</p>
+          <select class="selection" id="bandSelect"></select>
+        </div>
+      </div>
+      <p style="font-size: 0.75em">"worst frontend ever" - Tim Berners-Lee</p>
+    </div>
+    <div id="closeBar">
+      <p>☰</p>
+    </div>
+
+    <div class="message"id="changeSatellite">
+      <h1>Satellite changed!</h1>
+    </div>
+
+    <div class="message"id="changeBand">
+      <h1>Band changed!</h1>
+    </div>
+    
+    <div id="content">
+      <img id="globe" src="static\assets\1_25_23.png"\>
+    </div>
+
+    <!-- i am garbage at js sorry -->
+    <script src="static/js/menu.js"></script>
+    <script src="static/js/displaysatellite.js"></script>
+    <script src="static/js/generateDropdown.js"></script>
+    <script src="static/js/getCoordinates.js"></script>
+  </body>
+</html>

@@ -1,0 +1,92 @@
+/* define variables */
+:root {
+    --background:           #000000;
+    --background-alt:       #040404ee;
+    --background-button:    #4f4f4f;
+    --foreground:           #efefef;
+
+    --default-padding:      2em;
+    --default-radius:       0.5em;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+#content {
+    height: auto;
+    cursor: crosshair;
+}
+
+/* menu stuff */
+#menuOverlay {
+    display: none;
+    background-color:var(--background-alt);
+    padding: var(--default-padding);
+    border-radius: var(--default-radius);
+    position: fixed;
+    z-index: 97;
+}
+
+#closeBar:hover {
+    opacity: 50%;
+    cursor: pointer;
+}
+
+#closeBar {
+    background-color: #4f4f4f;
+    position: fixed;
+    padding: 0px 20px 0px 20px;
+    border-radius: var(--default-radius);
+    text-align: center;
+    text-shadow: 0px 0px 5px black;
+    opacity: 0%;
+    transition: opacity 0.3s;
+    user-select: none;
+    z-index: 97;
+    
+}
+
+#closeBar::before {
+    width: 100%;
+}
+
+#closeBar.p {
+    padding: 10px;
+}
+
+.closeEnabled {
+    opacity: 100 !important;
+    background-color:#00000000 !important;
+
+    z-index: 99;
+}
+
+.selection {
+    background-color: var(--background-button);
+    color: var(--foreground);
+    border-radius: var(--default-radius);
+    border-style: hidden;
+    padding: 0.5em;
+}
+
+.blocks {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    text-align: left;
+    vertical-align: middle;
+    gap: 0.5em;
+    grid-auto-rows: minmax(1em, auto);
+    align-items: center;
+}
+
+.message {
+    display: none;
+    text-align: center;
+    background-color: #000000cc;
+    padding: 100px;
+    border-radius: var(--default-radius);
+    z-index: 100;
+}
