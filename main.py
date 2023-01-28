@@ -24,7 +24,7 @@ from datetime import timedelta
 # export_to = sys.argv[2]
 
 
-def fetch_with_params(base_time=datetime.datetime.utcnow(), offset=12, bucket_name = "noaa-goes16", subdirectory="ABI-L2-MCMIPC"):
+def fetch_with_params(base_time=datetime.datetime.utcnow(), offset=12, bucket_name = "noaa-goes16", subdirectory="ABI-L2-MCMIPF"):
     incrementer = base_time - timedelta(hours=offset)
     
     while fetch_obj(incrementer.year, int(incrementer.strftime("%j")), incrementer.hour, bucket_name, subdirectory) != -1:
@@ -76,7 +76,12 @@ def fetch_obj(year, day, hour, bucket_name, subdirectory):
 
         meta_data = s3_client.head_object(Bucket=bucket_name, Key=obj.key)
         total_length = int(meta_data.get('ContentLength', 0))
-        local_name = "{}-{}_{}.nc".format(bucket_name, subdirectory, get_time_file(obj.key))
+        
+        path = "{}/{}".format(bucket_name, subdirectory)
+        if not os.path.isdir(path):
+            os.makedirs(path)
+
+        local_name = "{}/{}.nc".format(path, get_time_file(obj.key))
         downloaded = 0
 
         # Draw progress bar.
@@ -97,4 +102,4 @@ def fetch_obj(year, day, hour, bucket_name, subdirectory):
         print("\n")
 
 
-print(get_time_file("OR_ABI-L2-MCMIPF-M6_G17_s20230050400320_e20230050409398_c20230050409542.nc"))
+fetch_with_params(bucket_name="noaa-goes16")
