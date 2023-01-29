@@ -1,0 +1,3 @@
+TrueColor Visible
+Visible w/ Shortwave IR
+Longwave IR

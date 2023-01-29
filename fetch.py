@@ -20,6 +20,7 @@ def fetch_with_params(base_time=datetime.datetime.utcnow(), offset=12, bucket_na
     incrementer = base_time - timedelta(hours=offset)
     
     # Fetch all objects until directory no longer exists
+
     while fetch_obj(incrementer.year, int(incrementer.strftime("%j")), incrementer.hour, bucket_name, subdirectory) != -1:
         incrementer = incrementer + timedelta(hours=1)
 

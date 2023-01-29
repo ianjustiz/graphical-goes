@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>cool earth</title>
+    <link rel="icon" type="image/x-icon" href="./static/assets/icons/favicon.png">
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="./static/css/main.css" />
+  </head>
+
+  <body>
+    <div id="menuOverlay">
+      <h1 id="title"><em>graphical-goes</em></h1>
+      <h3>Image Settings</h3>
+      <div class="dropdownMenu">
+        <div class="blocks">
+          <p>Satellite</p>
+          <select class="selection" id="satelliteSelect"></select>
+          <p>Band</p>
+          <select class="selection" id="bandSelect"></select>
+        </div>
+      </div>
+      <h3>Animation Settings</h3>
+      <div class="blocks">
+        <p>Frametime <em>(ms)</em></p>
+        <input id="frametime" type="number" value="100">
+        <p>Hide UI</p>
+        <input id="hideui" type="checkbox">
+      </div>
+      <p style="font-size: 0.75em">"worst frontend ever" - Tim Berners-Lee</p>
+    </div>
+
+    
+    <div id="closeBar" class="button">
+      <p>☰</p>
+    </div>
+
+    <div class="controls">
+      <div class="slider">
+        <input type="range" min="1" max="38" value="1" class="slider" step="0.01" id="manualslider">
+      </div>
+      
+      <div id="buttoncontrols">
+        <div id="playpause" class="buttonControl" style="background-image: url('./static/assets/icons/play.png');"></div>
+        <div id="stop" class="buttonControl" style="background-image: url('./static/assets/icons/stop.png');"></div>
+        <div id="epochtime"></div>
+      </div>
+    </div>
+
+    <div class="message" id="changeSatellite">
+      <h1>Satellite changed!</h1>
+    </div>
+
+    <div class="message" id="changeBand">
+      <h1>Band changed!</h1>
+    </div>
+    
+    <div id="content" ></div>
+
+    <script src="static/js/anim.js"></script>
+    <script src="static/js/displaysatellite.js"></script>
+    <script src="static/js/generateDropdown.js"></script>
+    <script src="static/js/menu.js"></script>
+
+
+
+  </body>
+</html>

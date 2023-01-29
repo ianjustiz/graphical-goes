@@ -30,7 +30,7 @@ def process_file_Longwave(filename, directory):
     cleanir_c = np.maximum(cleanir_c, 0.0)
     cleanir_c = np.minimum(cleanir_c, 1.0)
     cleanir_c = np.float64(cleanir_c)
-
+    
     # Apply colormapping to greyscale image
     color_schema = cm.nipy_spectral(np.minimum(cleanir_c, .99))
     
@@ -49,6 +49,7 @@ def process_file_Longwave(filename, directory):
     fig.gca().yaxis.set_major_locator(matplotlib.ticker.NullLocator())
 
     fig.savefig(save_to, transparent=True, bbox_inches = 'tight', pad_inches = 0)
+
     plt.close()
 
 
