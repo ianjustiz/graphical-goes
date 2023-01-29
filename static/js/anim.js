@@ -1,17 +1,29 @@
 auto = false;
+var time = 0;
+
+function convertEpochToTime(epoch) {
+    var date = new Date(epoch * 1000); // js uses millisecond unix time, so we convert
+    return date.toUTCString();
+}
 
 function coolanimation() {
+    $("#playpause").css("background-image", "url('./static/assets/icons/pause.png')")
     var images = document.getElementsByTagName("img");
     auto = !auto;
-    var time = 0;
-    //var max = $("#content").data("images");
-    //console.log(max);
-    //center("#content");
-    var framerate = 100;
+    
+    var framerate = $("#frametime").val();
     var interval = setInterval(function() { 
-        if (auto == true) {
-            $("#playpause").text("◼")
-            if (time >= $("#content").data("images")) {
+        $("#stop").click(function() {
+            time = 0;
+        });
+
+        $("#frametime").on("change", function() {
+            clearInterval(interval);
+            $("#playpause").css("background-image", "url('./static/assets/icons/play.png')")
+        });
+
+        if (auto) {
+            if (time >= getNumberImages()) {
                 time = 0;
             }
             for (var i = 0; i < images.length; i++) {
@@ -20,15 +32,18 @@ function coolanimation() {
                 }
                 else {
                     images[i].style.display = "block";
+                    $("#epochtime").text(convertEpochToTime($("#" + i).data("unix")));
+                    $("#manualslider").val(i);
+
                 }
             }
-
-            console.log("frame: " + time);
             time++;
+
         }
+
         else { 
            clearInterval(interval);
-           $("#playpause").text("▶")
+           $("#playpause").css("background-image", "url('./static/assets/icons/play.png')")
         }
      }, framerate);
 
@@ -38,17 +53,35 @@ $("#playpause").click(function() {
     coolanimation();
 });
 
-// slider
-$("#manualslider").on("input", function() {
+$("#stop").click(function() {
     var images = document.getElementsByTagName("img");
-    
+    auto = false;
+    time = 0;
+
     for (var i = 0; i < images.length; i++) {
-        if (images[i].id != this.value) {
+        if (images[i].id != 0) {
             images[i].style.display = "none";
         }
         else {
             images[i].style.display = "block";
+            $("#epochtime").text(convertEpochToTime($("#" + i).data("unix")));
         }
+    }
+});
+
+// slider
+$("#manualslider").on("input", function() {
+    var images = document.getElementsByTagName("img");
+    translatedStep = Math.round(this.value * 1);
+    for (var i = 0; i < images.length; i++) {
+        if (images[i].id != translatedStep) {
+            images[i].style.display = "none";
+        }
+        else {
+            $("#epochtime").text(convertEpochToTime($("#" + i).data("unix")));
+            images[i].style.display = "block";
+        }
+        
     }
 
 });
@@ -58,12 +91,12 @@ function deleteAllImages() {
     while (images.length > 0) {
         images[0].parentNode.removeChild(images[0]);
     }
+
 }
 
 function preload(file) {
     $.get(file, function(data) {
         images = data.split(/[\n\r]+/);
-        //$("#globe").attr("src", images[num]);
         
         var num = 0;
         $(images).each(function() {
@@ -73,54 +106,44 @@ function preload(file) {
                     .attr("src", this)
                     .appendTo("#content")
                     .css("display", "fixed")
-                    .attr("id", num)
-                    .blowup({
-                        background: "#000000",
-                        width: 500,
-                        height: 500,
-                    }); 
-
-
+                    .attr("id", num);
+                saveUnixTime($("#" + num), this);
+                $("#epochtime").text(convertEpochToTime($("#0").data("unix")));
             }
             else {
-                $("<img />").attr("src", this).appendTo("#content").css("display", "none").attr("id", num); // if its not, then just preload the rest and then set them to not display
+                $("<img />")
+                    .attr("src", this)
+                    .appendTo("#content")
+                    .css("display", "none")
+                    .attr("id", num); // if its not, then just preload the rest and then set them to not display
+                saveUnixTime($("#" + num), this);
             }
             
             num++;
-            center("#content");
-            saveNumberImages(num);
+
         });
-        
-        //console.log("preload"+num);
-        //return num;
-        //center("#content");
-        
+        center("#content");
+        $("img").attr("draggable", "false");
     });
 }
 
-/*
-function getImageFromNumber(file, num) {
-    var images = new Array();
-    
-    $.get(file, function(data) {
-        images = data.split(/[\n\r]+/);
-        $("#globe").attr("src", images[num]);
-        //preload(file);
-    });
-    
+function saveNumberImages() {
+    var numImages = $("#content").find("img").length
+    $("#content").data("images", numImages);
 }
-*/
 
+function getNumberImages() {
+    var numImages = $("#content").find("img").length
+    return numImages;
+}
 
-function saveNumberImages(num) {
-    $("#content").data("images", num);
+function saveUnixTime(element, url) {
+    timestamp = url.replace(/\D/g, '');
+    timestamp = timestamp.substr(timestamp.length - 10);
+
+    $(element).data("unix", timestamp);
 }
 
 $(function() {
-    
-    // default preload
-    preload("./static/assets/images-cool/images.txt");
-
+    preload(`./static/assets/${satellite}/${zoom}/${band}/images.txt`);
 });
-
-//center("#content");

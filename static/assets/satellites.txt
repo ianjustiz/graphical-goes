@@ -1,2 +1,2 @@
-./static/assets/images-cool/images.txt
-./static/assets/images-cool-2/images.txt
+GOES-16
+GOES-18

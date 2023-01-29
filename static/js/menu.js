@@ -1,5 +1,10 @@
-// todo : make this not bad
 var toggled = false;
+var showUI = true;
+
+$("#hideui").change(function() {
+    console.log('hai');
+    $(".controls").toggle();
+});
 
 function center(element) {
     $(element).css({
@@ -7,20 +12,24 @@ function center(element) {
         'left': '50%',
         'top': '50%',
         'margin-left': function() {
-            //$(element).waitForImages(function() {
-            return -$(this).outerWidth()/2;
-            //});
+            $.getJSON(`./static/assets/${satellite}/${zoom}/info.json`, function(data){
+                return  data.width * 2;
+            });
 
-            
-            //return -1000
         },
         'margin-top': function() {
-            //$(element).waitForImages(function() {
-            return -$(this).outerWidth()/2;
-            //});
-            //return -1000
+            return $.getJSON(`./static/assets/${satellite}/${zoom}/info.json`, function(data){
+                return data.height / 2;
+            });
         },
         'height': 'auto',
+    });
+
+    $.getJSON(`./static/assets/${satellite}/${zoom}/info.json`, function(data){
+        $(element).css({
+            'margin-left': function() {return -(data.width / 2)},
+            'margin-top': function() {return -(data.height / 2)}
+        })
     });
 }
 
