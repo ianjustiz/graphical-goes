@@ -1,10 +1,9 @@
 
 # SatAlyze
-# Ian Justiz
+# Ian Justiz and Bed Pandey
 import os
 import sys
 from netCDF4 import Dataset
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -12,7 +11,6 @@ import boto3
 from botocore import UNSIGNED
 from botocore.config import Config
 
-import calendar
 import datetime
 from datetime import timedelta
 
@@ -102,4 +100,6 @@ def fetch_obj(year, day, hour, bucket_name, subdirectory):
         print("\n")
 
 
-fetch_with_params(bucket_name="noaa-goes16")
+#fetch_with_params(bucket_name="noaa-goes16", subdirectory="ABI-L2-MCMIPF", offset=1)
+
+# base_time=datetime.datetime.strptime("2022-09-27-18", "%Y-%m-%d-%H"),

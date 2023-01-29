@@ -4,13 +4,8 @@ from netCDF4 import Dataset
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib import cm
 import numpy as np
-import sys
-
-import datetime
-from datetime import timedelta
-
-import pathlib
 
 # Run this as
 # ./plot.py <MCMIP netcdf file> <output.png>
@@ -34,7 +29,46 @@ import pathlib
 
 # pat = "{}-{}_{}_{}-{}.nc".format(subdirectory, year, day, hour, count)
 
-directory = "noaa-goes16/ABI-L2-MCMIPF"
+
+def process_file_Longwave(filename, directory):
+    # Open the NetCDF File
+    g16ir = Dataset(filename, 'r')
+    band1 = g16ir.variables['CMI_C01'][:]
+
+    # Create variables to store output directory. Make directory if needed
+    ir_directory = "{}/ir".format(directory)
+    if not os.path.isdir(ir_directory):
+        os.makedirs(ir_directory)
+    
+    save_to = "{}".format(str(filename).replace(directory, ir_directory).replace(".nc",".png"))
+
+    # Get the Brightness Temperature band
+    ref_ir = np.ma.array(np.sqrt(g16ir.variables['CMI_C14'][:]), mask=band1.mask)
+
+    cleanir = g16ir.variables['CMI_C14'][:]
+    cir_min = 200.0
+    cir_max = 305.0
+    cleanir_c = (cleanir - cir_min) / (cir_max - cir_min)
+    cleanir_c = np.maximum(cleanir_c, 0.0)
+    cleanir_c = np.minimum(cleanir_c, 1.0)
+    cleanir_c = np.float64(cleanir_c)
+
+    cool = cm.nipy_spectral(np.minimum(cleanir_c, .99))
+    
+    mask = np.where(band1.mask == True)
+    alpha = np.ones(band1.shape)
+    alpha[mask] = 0.0
+    blended = np.dstack([cool[:,:,2], cool[:,:,1], cool[:,:,0], alpha])
+
+    fig = plt.figure(figsize=(6,6),dpi=500)
+    plt.imshow(blended)
+    plt.axis('off')
+    fig.gca().set_axis_off()
+    fig.gca().xaxis.set_major_locator(matplotlib.ticker.NullLocator())
+    fig.gca().yaxis.set_major_locator(matplotlib.ticker.NullLocator())
+
+    fig.savefig(save_to, transparent=True, bbox_inches = 'tight', pad_inches = 0)
+    plt.clf()
 
 
 def process_file_TrueColor(filename, directory):
@@ -80,18 +114,18 @@ def process_file_TrueColor(filename, directory):
     blended_noir = np.dstack([np.maximum(ref_red, 0), np.maximum(ref_green, 0), np.maximum(ref_blue, 0), alpha])
 
     # Plot it! Without axis & labels
-    fig = plt.figure(figsize=(6,6),dpi=300)
+    fig = plt.figure(figsize=(6,6),dpi=500)
     plt.imshow(blended)
     plt.axis('off')
     fig.gca().set_axis_off()
     fig.gca().xaxis.set_major_locator(matplotlib.ticker.NullLocator())
     fig.gca().yaxis.set_major_locator(matplotlib.ticker.NullLocator())
 
-    # Plot no-ir version!
     fig.savefig(save_to, transparent=True, bbox_inches = 'tight', pad_inches = 0)
     plt.clf()
 
-    fig = plt.figure(figsize=(6,6),dpi=300)
+    # Plot no-ir version!
+    fig = plt.figure(figsize=(6,6),dpi=500)
     plt.imshow(blended_noir)
     plt.axis('off')
     fig.gca().set_axis_off()
@@ -100,34 +134,22 @@ def process_file_TrueColor(filename, directory):
 
     fig.savefig(save_to_noir, transparent=True, bbox_inches = 'tight', pad_inches = 0)
     plt.clf()
+
+
+# def process_all(directory, maint_size):
+
+def process_all(directory):
+    files = os.listdir(directory)
+    for path in files:
+        local_path = "{}/{}".format(directory, path)
+
+        if ".nc" in str(local_path):
+            print("Procesing {}".format(local_path))
+
+            process_file_TrueColor(local_path, directory)
+            process_file_Longwave(local_path, directory)
+
+            os.remove(local_path)
     
-
-
-    os.remove(filename)
-    
-
-
-
-for filepath in pathlib.Path(directory).glob('**/*'):
-    process_file_TrueColor(filepath, directory)
-
-
-# for filename in files:
-#     print(filename)
-#     if filename.endswith('.nc'):
-#         process_file_TrueColor(filename)
-        
-        # Update file incrementor to next
-        # if(count == 11):
-        #     incrementor = incrementor + timedelta(hours=1)
-            
-        #     year = incrementor.year
-        #     day = (int)(incrementor.strftime("%j"))
-        #     hour = incrementor.hour
-        #     count = 0
-        # else:
-        #     count += 1
-        
-        #path = "{}-{}_{}_{}-{}.nc".format(subdirectory, year, day, hour, count)
-
+    return
 
