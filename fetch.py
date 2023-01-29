@@ -49,7 +49,7 @@ def get_time_file(filename):
     date_form = datetime.datetime.strptime("{}-{}-{}-{}-{}".format(year,day,hour,minute,second) , "%Y-%j-%H-%M-%S")
 
     # Return epoch time
-    return date_form.strftime("%s")
+    return int(date_form.timestamp())
 
 
 def fetch_obj(year, day, hour, bucket_name, subdirectory):

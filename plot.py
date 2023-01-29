@@ -136,8 +136,6 @@ def process_file_TrueColor(filename, directory):
     plt.clf()
 
 
-# def process_all(directory, maint_size):
-
 def process_all(directory):
     files = os.listdir(directory)
     for path in files:

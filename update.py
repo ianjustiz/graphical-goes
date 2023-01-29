@@ -1,5 +1,7 @@
 from plot import process_all
 from fetch import fetch_with_params
+import datetime
+from datetime import timedelta
 import json
 import os
 
@@ -46,32 +48,37 @@ def setup_directories():
             fetch_with_params(bucket_name=bucket, subdirectory=band, offset=6)
             process_all(directory)
 
+
 def update_directories():
     for bucket in satellite_buckets:
         for band in satellite_bands:
             directory = "{}/{}".format(bucket, band)
-        
-        
+            subpath = "{}/noir".format(directory)
 
+            with open("{}/info.json".format(directory)) as f:
+                json_dict = json.load(f)
+
+            files = os.listdir(subpath)
+            newest = sorted(files)[-1]
+
+            newest_time = datetime.datetime.fromtimestamp(int(newest[newest.find("1"):newest.find("p")-1]))
+
+            print(newest_time.strftime("%c"))
+
+            fetch_with_params(bucket_name=bucket, subdirectory=band, base_time=newest_time+timedelta(minutes=1), offset=0)
+            process_all(directory)
+            
+
+
+            incrementer = 0
+            while len(os.listdir(subpath)) > json_dict.get("maint_size"):
+                os.remove("{}/noir/{}.png".format(directory, sorted(files)[incrementer]))
+                os.remove("{}/ir/{}.png".format(directory, sorted(files)[incrementer]))
+                os.remove("{}/fc/{}.png".format(directory, sorted(files)[incrementer]))
+
+                incrementer += 1
+
+
+
+# update_directories()
 setup_directories()
-
-                   # EVERY FIVE MINUTES #
-
-# IF BELOW maintenance size (check beforehand) : Fetch with positive offset until size is met
-
-# Otherwise: 
-# Get date of most recently downloaded file in each directory 
-
-# Parse string date to datetime object
-
-# Determine directory location to be checked for next file
-
-# Call fetch_with_params with negative offset
-
-# ----- #
-
-# Call plot.py on entire directory to process files to pngs
-
-# Check maintenance filesize, compare to directory size
-
-# Truncate excess images (oldest first)
