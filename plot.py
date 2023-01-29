@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import os
 from netCDF4 import Dataset
 import matplotlib
@@ -6,28 +5,6 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
-
-# Run this as
-# ./plot.py <MCMIP netcdf file> <output.png>
-
-#if len(sys.argv) < 1:
-#	print("Usage: ./plot.py <MCMIP netcdf file>")
-#	sys.exit()
-#
-#import_from = sys.argv[1]
-#export_to = sys.argv[1].replace('.nc','.png')
-
-# today = datetime.datetime.utcnow()
-# incrementor = today - timedelta(hours=12)
-
-# subdirectory = "ABI-L2-MCMIPC"
-
-# year = incrementor.year
-# day = (int)(incrementor.strftime("%j"))
-# hour = incrementor.hour
-# count = 1
-
-# pat = "{}-{}_{}_{}-{}.nc".format(subdirectory, year, day, hour, count)
 
 
 def process_file_Longwave(filename, directory):
@@ -45,6 +22,7 @@ def process_file_Longwave(filename, directory):
     # Get the Brightness Temperature band
     ref_ir = np.ma.array(np.sqrt(g16ir.variables['CMI_C14'][:]), mask=band1.mask)
 
+    # Normalize IR band 
     cleanir = g16ir.variables['CMI_C14'][:]
     cir_min = 200.0
     cir_max = 305.0
@@ -53,14 +31,17 @@ def process_file_Longwave(filename, directory):
     cleanir_c = np.minimum(cleanir_c, 1.0)
     cleanir_c = np.float64(cleanir_c)
 
-    cool = cm.nipy_spectral(np.minimum(cleanir_c, .99))
+    # Apply colormapping to greyscale image
+    color_schema = cm.nipy_spectral(np.minimum(cleanir_c, .99))
     
+    # Generate alpha mask for off Earth locations. Stack colormap into blended image
     mask = np.where(band1.mask == True)
     alpha = np.ones(band1.shape)
     alpha[mask] = 0.0
-    blended = np.dstack([cool[:,:,2], cool[:,:,1], cool[:,:,0], alpha])
+    blended = np.dstack([color_schema[:,:,2], color_schema[:,:,1], color_schema[:,:,0], alpha])
 
-    fig = plt.figure(figsize=(6,6),dpi=500)
+    # Plot it! Without axis & labels
+    fig = plt.figure(figsize=(6,6),dpi=300)
     plt.imshow(blended)
     plt.axis('off')
     fig.gca().set_axis_off()
@@ -68,7 +49,7 @@ def process_file_Longwave(filename, directory):
     fig.gca().yaxis.set_major_locator(matplotlib.ticker.NullLocator())
 
     fig.savefig(save_to, transparent=True, bbox_inches = 'tight', pad_inches = 0)
-    plt.clf()
+    plt.close()
 
 
 def process_file_TrueColor(filename, directory):
@@ -114,7 +95,7 @@ def process_file_TrueColor(filename, directory):
     blended_noir = np.dstack([np.maximum(ref_red, 0), np.maximum(ref_green, 0), np.maximum(ref_blue, 0), alpha])
 
     # Plot it! Without axis & labels
-    fig = plt.figure(figsize=(6,6),dpi=500)
+    fig = plt.figure(figsize=(6,6),dpi=300)
     plt.imshow(blended)
     plt.axis('off')
     fig.gca().set_axis_off()
@@ -125,7 +106,7 @@ def process_file_TrueColor(filename, directory):
     plt.clf()
 
     # Plot no-ir version!
-    fig = plt.figure(figsize=(6,6),dpi=500)
+    fig = plt.figure(figsize=(6,6),dpi=300)
     plt.imshow(blended_noir)
     plt.axis('off')
     fig.gca().set_axis_off()
@@ -133,14 +114,16 @@ def process_file_TrueColor(filename, directory):
     fig.gca().yaxis.set_major_locator(matplotlib.ticker.NullLocator())
 
     fig.savefig(save_to_noir, transparent=True, bbox_inches = 'tight', pad_inches = 0)
-    plt.clf()
+    plt.close()
 
 
 def process_all(directory):
+    # Iterate through all files in given directory
     files = os.listdir(directory)
     for path in files:
         local_path = "{}/{}".format(directory, path)
 
+        # For each .nc file, process the modes and subsequently delete
         if ".nc" in str(local_path):
             print("Procesing {}".format(local_path))
 
@@ -148,6 +131,4 @@ def process_all(directory):
             process_file_Longwave(local_path, directory)
 
             os.remove(local_path)
-    
-    return
 
