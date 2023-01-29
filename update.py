@@ -63,6 +63,10 @@ def update_directories():
             
             # Get time from the newest file in directory
             files = os.listdir(subpath)
+            for file in files:
+                if file.find(".png") == -1:
+                    files.remove(file)
+            
             newest = sorted(files)[-1]
             newest_time = datetime.datetime.fromtimestamp(int(newest[newest.find("1"):newest.find("p")-1]))
             
