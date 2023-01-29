@@ -30,7 +30,7 @@ body {
     z-index: 97;
 }
 
-#closeBar:hover {
+#closeBar:hover, #playpause:hover {
     opacity: 50%;
     cursor: pointer;
 }
@@ -42,11 +42,26 @@ body {
     border-radius: var(--default-radius);
     text-align: center;
     text-shadow: 0px 0px 5px black;
-    opacity: 0%;
+    opacity: 25%;
     transition: opacity 0.3s;
     user-select: none;
     z-index: 97;
     
+}
+
+#playpause {
+    background-color: #4f4f4f;
+    padding: 5px 20px 5px 20px;
+    border: 10px 10px 10px 10px;
+    border-radius: 100px;
+    position: relative;
+    border-radius: var(--default-radius);
+    text-align: center;
+    text-shadow: 0px 0px 5px black;
+    opacity: 25%;
+    transition: opacity 0.3s;
+    user-select: none;
+    z-index: 97;
 }
 
 #closeBar::before {
@@ -72,6 +87,14 @@ body {
     padding: 0.5em;
 }
 
+.selection:focus {
+    outline: none;
+}
+
+.selection:hover {
+    outline: none;
+}
+
 .blocks {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -89,4 +112,8 @@ body {
     padding: 100px;
     border-radius: var(--default-radius);
     z-index: 100;
+}
+
+.showImage {
+    display: block !important;
 }

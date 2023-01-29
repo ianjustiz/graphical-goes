@@ -1,23 +1,25 @@
 // define variables so it looks nicer?
-var earth       = $("#content");
+var earth = $("#content");
 
-function center(element) {
-    $(element).css({
-        'position': 'absolute',
-        'left': '50%',
-        'top': '50%',
-        'margin-left': function() {return -$(this).outerWidth()/2},
-        'margin-top': function() {return -$(this).outerHeight()/2},
-        'height': 'auto',
+
+// current idea that i think might by going wrong:
+// it might be trying to center even though it hasnt loaded in yet, so it centers it incorrectly
+
+$(document).ready(function() {
+
+    earth.css({"display": "none"});
+    //$("#0").css({"opacity": "20%"});
+    earth.fadeIn(1000, function() {
+        //earth.css({'opacity': '100'});
+        center("#content");
+        
     });
-}
 
-$(function() {
-    earth.css({'display': 'none'});
-    center(earth);
-    earth.fadeIn(1000);
-})
+    
+    
+});
 
 $(window).resize(function() {
     center("#content");
 });
+

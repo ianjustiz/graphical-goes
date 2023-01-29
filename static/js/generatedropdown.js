@@ -23,14 +23,23 @@ function messageOnChange(element, msgBox) {
         var selected = $(this).find("option:selected");
         //var value = selected.val(); // probably useful for changing image
         var text = selected.text();
-        //console.log(value);
-        console.log(text);
+
+        deleteAllImages();
+        preload(text)
+
+        num = $("#content").data("images");
+
+        console.log("images on html = " + num);
+        $("#manualslider").attr("max", num);
+
         $(msgBox).fadeIn(150).delay(1000);
         $(msgBox).fadeOut(500);
     })
 }
 
 center(".message");
+
+//$(".message").center();
 
 generateDropdownArray("./static/assets/satellites.txt", "#satelliteSelect");
 generateDropdownArray("./static/assets/bands.txt", "#bandSelect");
