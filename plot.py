@@ -132,4 +132,3 @@ def process_all(directory):
             process_file_Longwave(local_path, directory)
 
             os.remove(local_path)
-
