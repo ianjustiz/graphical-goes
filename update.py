@@ -1,3 +1,4 @@
+import sys
 from plot import process_all
 from fetch import fetch_with_params
 import datetime
@@ -91,4 +92,13 @@ def update_directories():
                 incrementer += 1
 
 
-update_directories()
+if len(sys.argv) >= 2:
+    update_type = sys.argv[1]
+    
+    if update_type.lower() == "update":
+        update_directories()
+    elif update_type.lower() == "setup":
+        setup_directories()
+    
+else:
+    print("Argument formatting is [setup/create]")
