@@ -13,6 +13,8 @@ import os
 satellite_buckets = ["noaa-goes16", "noaa-goes18"]
 satellite_bands = ["ABI-L2-MCMIPF", "ABI-L2-MCMIPC"]
 
+hourly_offset = 6
+
 fd_dict = {
     "maint_size": 78,
     "time_interval": 10,
@@ -45,7 +47,7 @@ def setup_directories():
                     json.dump(con_dict, f)
             
             # Fetch raw data files and process into images
-            fetch_with_params(bucket_name=bucket, subdirectory=band, offset=6)
+            fetch_with_params(bucket_name=bucket, subdirectory=band, offset=hourly_offset)
             process_all(directory)
 
 
@@ -69,7 +71,12 @@ def update_directories():
             
             newest = sorted(files)[-1]
             newest_time = datetime.datetime.fromtimestamp(int(newest[newest.find("1"):newest.find("p")-1]))
+            delta = datetime.datetime.utcnow() - newest_time
             
+            # If latest time is over the hourly offset, use the hourly offset instead.
+            if delta.seconds > timedelta(hours=hourly_offset).seconds:
+                newest_time = datetime.datetime.utcnow() - timedelta(hours=hourly_offset)
+
             # Fetch all newer files from date onward and process
             fetch_with_params(bucket_name=bucket, subdirectory=band, base_time=newest_time+timedelta(minutes=1), offset=0)
             process_all(directory)

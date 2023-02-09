@@ -97,4 +97,3 @@ def fetch_obj(year, day, hour, bucket_name, subdirectory):
             s3_client.download_fileobj(bucket_name, obj.key, f, Callback=progress)
 
         print("\n")
-
